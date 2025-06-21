@@ -7,14 +7,30 @@ Dataset ini berasal dari tabel `spstore_staging`, yang berisi data historis tran
 
 ---
 
-## 🧠 Key Questions & Insights
-
+# 🧠 Key Questions & Insights
+## 🔥  cek Order dan ship date 
+```sql
+--Ship Date
+select `Ship Date`, count(*) as total_ship, 
+round(avg(`Profit`),2) as avg_profit
+from spstore_staging
+group by `Ship Date`
+order by total_ship desc;
+-- Order Date
+select `Order Date`, count(*) as total_order,
+round(avg(`Profit`),2) as avg_profit
+from spstore_staging
+group by `Order Date`
+order by total_order desc;
+🎈 Insight :
+> Order date dan ship date berpengaruh terhadap tingkat profitabilitas produk
+```
 ### 🗓️ Periode Transaksi
 ```sql
 select min(`Order Date`), max(`Order Date`) from spstore_staging;
 select min(`Ship Date`), max(`Ship Date`) from spstore_staging;
 📍 Insight :
-- Periode transaksi mencakup data dari awal hingga akhir tahun
+> Periode transaksi mencakup data dari awal hingga akhir tahun
 ```
 ## ❌ Produk dengan Kerugian
 ```sql
@@ -22,7 +38,8 @@ select `Product Name`, Sales,Discount,Profit
 from spstore_staging
 where Profit < 0;
 📍 Insight :
-- Terdapat sejumlah produk dengan nilai profit negatif, sebagian besar diantaranya memiliki diskon yang tinggi -> indikasi bahwa diskon besar tidak selalu meningkatkan profit.
+- Terdapat sejumlah produk dengan nilai profit negatif, sebagian besar diantaranya memiliki diskon yang tinggi
+-> indikasi bahwa diskon besar tidak selalu meningkatkan profit.
 ```
 ## 🌎 Total Profit per Region
 ```sql
@@ -31,7 +48,7 @@ from spstore_staging
 group by Region
 order by total_profit desc;
 🎈 Insight :
-- Region tertentu berkontribusi besar terhadap total profit. Region lainnya mungkin membutuhkan strategi perbaikan distribusi atau pricing.
+> Region tertentu berkontribusi besar terhadap total profit. Region lainnya mungkin membutuhkan strategi perbaikan distribusi atau pricing.
 ```
 ## 🏷️ Penjualan Berdasarkan Kategori
 ```sql
@@ -40,7 +57,7 @@ from spstore_staging
 group by Category
 order by total_sales desc;
 🎈 insight :
-- Kategori Office Supplies mendominasi penjualan, namun perlu dibandingkan lagi dengan tingkat profitabilitasnya.
+> Kategori Office Supplies mendominasi penjualan, namun perlu dibandingkan lagi dengan tingkat profitabilitasnya.
 ```
 ## 📊 Sub-Category: Diskon vs Profit
 ```sql
@@ -50,7 +67,8 @@ from spstore_staging
 group by `Sub-Category`
 order by avg_profit;
 🎈 Insight :
-- Sub-kategori dengan diskon tinggi cenderung memiliki profit yang rendah → butuh evaluasi efektivitas promosi.
+> Sub-kategori dengan diskon tinggi cenderung memiliki profit yang rendah
+→ butuh evaluasi efektivitas promosi.
 ```
 ## 💰 Produk paling menguntungkan
 ```sql
@@ -67,7 +85,7 @@ group by `Row ID`,`Product Name`
 order by total_kuan desc
 limit 10;
 🎈 Insight :
-- Produk terlaris belum tentu menjadi produk paling menguntungkan, penting menvg-evaluasi margin per-produk
+> Produk terlaris belum tentu menjadi produk paling menguntungkan, penting meng-evaluasi margin per-produk
 ```
 ## ⚖ Rasio profit terhadap penjualan (Profitability)
 ```sql
@@ -77,8 +95,9 @@ group by `Product Name`
 order by profit_per_sales desc
 limit 5;
 🎈 insight :
-- Produk dengan rasio tinggi merupakan produk yang ideal untuk difokuskan dalam penjualan
+> Produk dengan rasio tinggi merupakan produk yang ideal untuk difokuskan dalam penjualan
 ```
+
 # CTE-Based deeper analysis
 ## 🏆 5 Produk Terbaik per-kategori
 ```sql
@@ -92,7 +111,7 @@ group by Category, `Product Name`
 select * from ranked_profit
 where rank_profit <=5;
 🎈 Insight :
-- Produk unggulan berbeda antar kategori, bisa jadi dasar strategi bundlind atau cross-sell
+> Produk unggulan berbeda antar kategori, bisa jadi dasar strategi bundlind atau cross-sell
 ```
 ##  🔻 Produk rugi dengan diskon tinggi
 ```sql
@@ -106,7 +125,7 @@ from less_product
 group by `Product Name`,Profit
 order by diskon_rata2 desc;
 🎈 Insight :
-- Menunjukan adanya pola diskon yang tidak efektif atau over-discounting
+> Menunjukan adanya pola diskon yang tidak efektif atau over-discounting
 ```
 ## 🧭 Profit per Region & Sub-Category
 ```sql
@@ -119,7 +138,7 @@ group by Region, `Sub-Category`
 select * from profit_per_region 
 order by profit_rata2 desc;
 🎈 Insight :
-- Preferensi pelanggan antar region berbeda. Beberapa region unggul dalam sub-kategori tertentu.
+> Preferensi pelanggan antar region berbeda. Beberapa region unggul dalam sub-kategori tertentu.
 ```
 ## 💹 Rasio Profitability Produk
 ```sql
@@ -133,7 +152,7 @@ select * from profitability
 order by profit_per_sales desc
 limit 5;
 🎈 Insight :
-- Rasio profit terhadap sales memperjelas produk mana yang efisien secara finansial, bukan hanya populer.
+> Rasio profit terhadap sales memperjelas produk mana yang efisien secara finansial, bukan hanya populer.
 ```
 ## 📈 Tren Bulanan (Quantity & Profit)
 ```sql
@@ -147,7 +166,7 @@ group by  `Month`
 select * from laporan_bulanan
 order by `Month` asc;
 🎈 Insight :
-- Menunjukan tren musiman atau bulanan dalam hal penjualan dan profit
+> Menunjukan tren musiman atau bulanan dalam hal penjualan dan profit
 ```
 # 🧰 Tools & Technologies
 ```
@@ -156,5 +175,6 @@ order by `Month` asc;
 - Analisis berbasis query tanpa visualisasi
 ```
 # ✍️ Author
-Faraj Hafidh ```
+Faraj Hafidh
+[Github link for-project]
 https://github.com/TachooDa/Retail-Superstore-SQL-EDA-Profitability-Sales-Analysis/edit/main/README.md
