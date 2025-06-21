@@ -113,6 +113,8 @@ where rank_profit <=5;
 🎈 Insight :
 > Produk unggulan berbeda antar kategori, bisa jadi dasar strategi bundling atau cross-sell
 ```
+### Output : Top 5 Produk Terlaris
+![top_product] (https://github.com/TachooDa/Retail-Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/top5_product.png)
 ##  🔻 Produk rugi dengan diskon tinggi
 ```sql
 with less_product as (
