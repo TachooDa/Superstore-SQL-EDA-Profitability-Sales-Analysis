@@ -97,7 +97,8 @@ limit 5;
 🎈 insight :
 > Produk dengan rasio tinggi merupakan produk yang ideal untuk difokuskan dalam penjualan
 ```
-
+### Output : Profit vs Sales Ratio
+![Profit vs Sales Ratio] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Profit%20vs%20Sales%20ratio.png)
 # CTE-Based deeper analysis
 ## 🏆 5 Produk Terbaik per-kategori
 ```sql
