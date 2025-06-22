@@ -1,0 +1,53 @@
+### 📍 Rata-rata Profit per Region dan Sub-Category
+
+| Region  | Sub-Category | Profit Rata-rata |
+|---------|--------------|------------------|
+| West    | Tables       | 163.65           |
+| East    | Phones       | 78.13            |
+| South   | Envelopes    | 62.81            |
+| Central | Phones       | 60.60            |
+| East    | Storage      | 57.79            |
+| South   | Appliances   | 56.20            |
+| West    | Phones       | 49.27            |
+| South   | Chairs       | 46.14            |
+| South   | Bookcases    | 41.91            |
+| Central | Envelopes    | 35.42            |
+| West    | Appliances   | 34.47            |
+| East    | Envelopes    | 24.64            |
+| West    | Paper        | 24.59            |
+| West    | Binders      | 22.04            |
+| West    | Art          | 21.67            |
+| East    | Furnishings  | 21.33            |
+| Central | Accessories  | 20.94            |
+| South   | Paper        | 20.55            |
+| Central | Labels       | 19.15            |
+| West    | Supplies     | 18.45            |
+| South   | Accessories  | 17.60            |
+| West    | Furnishings  | 15.92            |
+| East    | Paper        | 14.85            |
+| Central | Art          | 13.92            |
+| West    | Storage      | 12.65            |
+| Central | Paper        | 11.85            |
+| East    | Fasteners    | 9.25             |
+| West    | Labels       | 6.87             |
+| Central | Binders      | 6.70             |
+| East    | Binders      | 6.23             |
+| East    | Art          | 4.70             |
+| East    | Accessories  | 4.12             |
+| East    | Chairs       | 3.04             |
+| South   | Phones       | 2.10             |
+| West    | Fasteners    | 1.97             |
+| South   | Furnishings  | 1.21             |
+| South   | Art          | 1.07             |
+| South   | Storage      | -2.04            |
+| Central | Storage      | -2.12            |
+| West    | Accessories  | -2.98            |
+| Central | Chairs       | -5.46            |
+| West    | Chairs       | -9.16            |
+| Central | Appliances   | -28.53           |
+| Central | Furnishings  | -35.74           |
+| Central | Bookcases    | -46.98           |
+| South   | Binders      | -53.84           |
+| South   | Tables       | -383.03          |
+| Central | Tables       | -407.68          |
+| East    | Bookcases    | -1665.05         |
