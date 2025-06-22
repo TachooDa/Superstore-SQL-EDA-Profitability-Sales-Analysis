@@ -175,7 +175,7 @@ order by `Month` asc;
 🎈 Insight :
 > Menunjukan tren musiman atau bulanan dalam hal penjualan dan profit
 ```
-## Output : Tren Bulanan [Mont,total_qty,total_profit]
+## Output : Tren Bulanan [Month,total_qty,total_profit]
 ![Tren Bulanan] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Tren%20Bulanan)
 # 🧰 Tools & Technologies
 ```
