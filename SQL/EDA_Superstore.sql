@@ -42,7 +42,7 @@ from spstore_staging
 group by `Product Name`
 order by profit_per_sales desc
 limit 5;
--- 8. Ship date analysis
+-- 8. Cek Ship date
 select `Ship Date`, count(*) as total_ship, 
 round(avg(`Profit`),2) as avg_profit
 from spstore_staging
