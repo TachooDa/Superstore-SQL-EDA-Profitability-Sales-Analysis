@@ -182,6 +182,7 @@ order by `Month` asc;
 - SQL Query (Mysql)
 - CTE (Common Table Expression)
 - Analisis berbasis query tanpa visualisasi
+- Data Preprocessing dilakukan pada table `spstore_staging`
 ```
 # ✍️ Author
 Faraj Hafidh
