@@ -130,6 +130,8 @@ order by diskon_rata2 desc;
 🎈 Insight :
 > Menunjukan adanya pola diskon yang tidak efektif atau over-discounting
 ```
+## Output : Produk merugi dengan diskon tinggi
+![Produk merugi dengan diskon tinggi] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Produk%20merugi%20dengan%20diskon%20tinggi)
 ## 🧭 Profit per Region & Sub-Category
 ```sql
 select * from spstore_staging;
