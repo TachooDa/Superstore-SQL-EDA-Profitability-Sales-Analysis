@@ -143,6 +143,8 @@ order by profit_rata2 desc;
 🎈 Insight :
 > Preferensi pelanggan antar region berbeda. Beberapa region unggul dalam sub-kategori tertentu.
 ```
+## Output : Profit rata-rata per region
+![Profit rata-rata per region] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Profit%20rata-rata%20per%20region)
 ## 💹 Rasio Profitability Produk
 ```sql
 with profitability as (
