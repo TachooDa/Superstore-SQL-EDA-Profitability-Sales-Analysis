@@ -1,190 +1,291 @@
-# Superstore-SQL-EDA-Profitability-Sales-Analysis
-## 📌 Project Overview
+# 🛒 Superstore SQL EDA - Analisis Profitabilitas & Penjualan
 
-Proyek ini bertujuan untuk mengeksplorasi data retail menggunakan SQL dalam rangka memahami pola penjualan, profitabilitas produk, efektivitas diskon, serta performa tiap wilayah (region) dan kategori. Analisis ini dilakukan menggunakan query SQL dan Common Table Expressions (CTE).
+## 📌 Ringkasan Proyek
 
-Dataset ini berasal dari tabel `spstore_staging`, yang berisi data historis transaksi retail seperti `Order Date`, `Sales`, `Profit`, `Discount`, `Product Name`, `Category`, `Sub-Category`, dan `Region`.
+Proyek ini bertujuan untuk mengeksplorasi data retail menggunakan SQL dalam rangka memahami pola penjualan, profitabilitas produk, efektivitas diskon, serta performa tiap wilayah (region) dan kategori. Analisis ini dilakukan menggunakan **query SQL** dan **Common Table Expressions (CTE)** untuk mendapatkan insight mendalam tentang performa bisnis retail.
+
+Dataset berasal dari tabel `spstore_staging`, yang berisi data historis transaksi retail dengan informasi lengkap tentang penjualan, profit, diskon, dan segmentasi produk.
 
 ---
 
-# 🧠 Key Questions & Insights
-## 🔥  cek Order dan ship date 
+## 📁 Informasi Dataset
+
+| **Field** | **Deskripsi** |
+|-----------|---------------|
+| **Nama Tabel** | `spstore_staging` |
+| **Periode Data** | [`2014-05-13` & `2017-12-30`] |
+| **Total Record** | [`173` Record] |
+
+### **Kolom Utama:**
+- `Order Date` – Tanggal pemesanan
+- `Ship Date` – Tanggal pengiriman
+- `Sales` – Nilai penjualan
+- `Profit` – Keuntungan per transaksi
+- `Discount` – Persentase diskon
+- `Product Name` – Nama produk
+- `Category` – Kategori produk utama
+- `Sub-Category` – Sub-kategori produk
+- `Region` – Wilayah penjualan
+- `Quantity` – Jumlah produk terjual
+
+---
+
+## 🎯 Pertanyaan Bisnis Utama & Insight
+
+### **🗓️ Analisis Temporal**
+
+#### **1. Pengaruh Tanggal Pemesanan & Pengiriman**
 ```sql
---Ship Date
-select `Ship Date`, count(*) as total_ship, 
-round(avg(`Profit`),2) as avg_profit
-from spstore_staging
-group by `Ship Date`
-order by total_ship desc;
--- Order Date
-select `Order Date`, count(*) as total_order,
-round(avg(`Profit`),2) as avg_profit
-from spstore_staging
-group by `Order Date`
-order by total_order desc;
-🎈 Insight :
-> Order date dan ship date berpengaruh terhadap tingkat profitabilitas produk
+-- Analisis Ship Date
+SELECT `Ship Date`, COUNT(*) as total_ship, 
+       ROUND(AVG(`Profit`),2) as avg_profit
+FROM spstore_staging
+GROUP BY `Ship Date`
+ORDER BY total_ship DESC;
+
+-- Analisis Order Date
+SELECT `Order Date`, COUNT(*) as total_order,
+       ROUND(AVG(`Profit`),2) as avg_profit
+FROM spstore_staging
+GROUP BY `Order Date`
+ORDER BY total_order DESC;
 ```
-### 🗓️ Periode Transaksi
+**💡 Insight:** Order date dan ship date berpengaruh terhadap tingkat profitabilitas produk
+
+#### **2. Periode Transaksi**
 ```sql
-select min(`Order Date`), max(`Order Date`) from spstore_staging;
-select min(`Ship Date`), max(`Ship Date`) from spstore_staging;
-📍 Insight :
-> Periode transaksi mencakup data dari awal hingga akhir tahun
+SELECT MIN(`Order Date`), MAX(`Order Date`) FROM spstore_staging;
+SELECT MIN(`Ship Date`), MAX(`Ship Date`) FROM spstore_staging;
 ```
-## ❌ Produk dengan Kerugian
+**💡 Insight:** Periode transaksi mencakup data dari awal hingga akhir tahun
+
+---
+
+### **💰 Analisis Profitabilitas**
+
+#### **3. Produk dengan Kerugian**
 ```sql
-select `Product Name`, Sales,Discount,Profit
-from spstore_staging
-where Profit < 0;
-📍 Insight :
-- Terdapat sejumlah produk dengan nilai profit negatif, sebagian besar diantaranya memiliki diskon yang tinggi
--> indikasi bahwa diskon besar tidak selalu meningkatkan profit.
+SELECT `Product Name`, Sales, Discount, Profit
+FROM spstore_staging
+WHERE Profit < 0;
 ```
-## 🌎 Total Profit per Region
+**💡 Insight:** Terdapat produk dengan profit negatif, sebagian besar memiliki diskon tinggi → indikasi bahwa diskon besar tidak selalu meningkatkan profit.
+
+#### **4. Produk Paling Menguntungkan**
 ```sql
-select `Region`, sum(`Profit`) as total_profit
-from spstore_staging
-group by `Region`
-order by total_profit desc;
-🎈 Insight :
-> Region tertentu berkontribusi besar terhadap total profit. Region lainnya mungkin membutuhkan strategi perbaikan distribusi atau pricing.
+SELECT `Product Name`, `Profit`
+FROM spstore_staging
+ORDER BY `Profit` DESC
+LIMIT 5;
 ```
-## 🏷️ Penjualan Berdasarkan Kategori
+
+#### **5. Rasio Profitabilitas**
 ```sql
-select `Category`, sum(`sales`) as total_sales
-from spstore_staging
-group by `Category`
-order by total_sales desc;
-🎈 insight :
-> Kategori Office Supplies mendominasi penjualan, namun perlu dibandingkan lagi dengan tingkat profitabilitasnya.
+SELECT `Product Name`, 
+       SUM(`Profit`) / NULLIF(SUM(`Sales`),0) as profit_per_sales
+FROM spstore_staging
+GROUP BY `Product Name`
+ORDER BY profit_per_sales DESC
+LIMIT 5;
 ```
-## 📊 Sub-Category: Diskon vs Profit
+**💡 Insight:** Produk dengan rasio tinggi merupakan produk ideal untuk difokuskan dalam penjualan
+
+---
+
+### **🌍 Analisis Regional**
+
+#### **6. Total Profit per Region**
 ```sql
-select `Sub-Category`, round(avg(`Discount`),2) as avg_diskon,
-round(avg(`Profit`),2)as avg_profit
-from spstore_staging
-group by `Sub-Category`
-order by avg_profit;
-🎈 Insight :
-> Sub-kategori dengan diskon tinggi cenderung memiliki profit yang rendah
-→ butuh evaluasi efektivitas promosi.
+SELECT `Region`, SUM(`Profit`) as total_profit
+FROM spstore_staging
+GROUP BY `Region`
+ORDER BY total_profit DESC;
 ```
-## 💰 Produk paling menguntungkan
+**💡 Insight:** Region tertentu berkontribusi besar terhadap total profit. Region lainnya membutuhkan strategi perbaikan distribusi atau pricing.
+
+---
+
+### **🏷️ Analisis Kategori & Produk**
+
+#### **7. Penjualan Berdasarkan Kategori**
 ```sql
-select `Product Name`, `Profit`
-from spstore_staging
-order by `Profit` desc
-limit 5;
+SELECT `Category`, SUM(`Sales`) as total_sales
+FROM spstore_staging
+GROUP BY `Category`
+ORDER BY total_sales DESC;
 ```
-## 📦 Produk terbanyak terjual
+**💡 Insight:** Kategori Office Supplies mendominasi penjualan, perlu dibandingkan dengan profitabilitasnya.
+
+#### **8. Sub-Category: Diskon vs Profit**
 ```sql
-select `Row ID`,`Product Name`, sum(`Quantity`) as qty_total
-from spstore_staging
-group by `Row ID`,`Product Name`
-order by qty_total desc
-limit 10;
-🎈 Insight :
-> Produk terlaris belum tentu menjadi produk paling menguntungkan, penting meng-evaluasi margin per-produk
+SELECT `Sub-Category`, 
+       ROUND(AVG(`Discount`),2) as avg_diskon,
+       ROUND(AVG(`Profit`),2) as avg_profit
+FROM spstore_staging
+GROUP BY `Sub-Category`
+ORDER BY avg_profit;
 ```
-## ⚖ Rasio profit terhadap penjualan (Profitability)
+**💡 Insight:** Sub-kategori dengan diskon tinggi cenderung memiliki profit rendah → butuh evaluasi efektivitas promosi.
+
+#### **9. Produk Terbanyak Terjual**
 ```sql
-select `Product Name`,sum(`Profit`) / nullif(sum(`Sales`),0) as profit_per_sales
-from spstore_staging
-group by `Product Name`
-order by profit_per_sales desc
-limit 5;
-🎈 insight :
-> Produk dengan rasio tinggi merupakan produk yang ideal untuk difokuskan dalam penjualan
+SELECT `Row ID`, `Product Name`, SUM(`Quantity`) as qty_total
+FROM spstore_staging
+GROUP BY `Row ID`, `Product Name`
+ORDER BY qty_total DESC
+LIMIT 10;
 ```
-### Output : Profit vs Sales Ratio
-![Profit vs Sales Ratio] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Profit%20vs%20Sales%20ratio.png)
-# CTE-Based deeper analysis
-## 🏆 5 Produk Terbaik per-kategori
+**💡 Insight:** Produk terlaris belum tentu menjadi produk paling menguntungkan, penting mengevaluasi margin per-produk.
+
+---
+
+## 🧠 Analisis Lanjutan dengan CTE
+
+### **🏆 Top 5 Produk Terbaik per Kategori**
 ```sql
-with ranked_profit as (
-select `Category`, `Product Name`,
-sum(`Profit`) as total_profit,
-rank() over(partition by `Category` order by sum(`Profit`) desc) as rank_profit
-from spstore_staging
-group by `Category`, `Product Name`
+WITH ranked_profit AS (
+    SELECT `Category`, `Product Name`,
+           SUM(`Profit`) as total_profit,
+           RANK() OVER(PARTITION BY `Category` ORDER BY SUM(`Profit`) DESC) as rank_profit
+    FROM spstore_staging
+    GROUP BY `Category`, `Product Name`
 )
-select * from ranked_profit
-where rank_profit <=5;
-🎈 Insight :
-> Produk unggulan berbeda antar kategori, bisa jadi dasar strategi bundling atau cross-sell
+SELECT * FROM ranked_profit
+WHERE rank_profit <= 5;
 ```
-### Output : Top 5 Produk Terlaris
-![top_product] (https://github.com/TachooDa/Retail-Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/top5_product.png)
-##  🔻 Produk rugi dengan diskon tinggi
+**💡 Insight:** Produk unggulan berbeda antar kategori, bisa jadi dasar strategi bundling atau cross-sell.
+
+
+### **🔻 Produk Rugi dengan Diskon Tinggi**
 ```sql
-with less_product as (
-select `Product Name`, `Discount`, `Profit`
-from spstore_staging
-where `Profit` < 0
+WITH loss_product AS (
+    SELECT `Product Name`, `Discount`, `Profit`
+    FROM spstore_staging
+    WHERE `Profit` < 0
 )
-select `Product Name`,Profit, avg(`Discount`) as diskon_rata2
-from less_product
-group by `Product Name`, `Profit`
-order by diskon_rata2 desc;
-🎈 Insight :
-> Menunjukan adanya pola diskon yang tidak efektif atau over-discounting
+SELECT `Product Name`, Profit, AVG(`Discount`) as diskon_rata2
+FROM loss_product
+GROUP BY `Product Name`, `Profit`
+ORDER BY diskon_rata2 DESC;
 ```
-## Output : Produk merugi dengan diskon tinggi
-![Produk merugi dengan diskon tinggi] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Produk%20merugi%20dengan%20diskon%20tinggi)
-## 🧭 Profit per Region & Sub-Category
+**💡 Insight:** Menunjukkan pola diskon yang tidak efektif atau over-discounting.
+
+
+### **🧭 Profit per Region & Sub-Category**
 ```sql
-select * from spstore_staging;
-with profit_per_region as (
-select Region, `Sub-Category`, round(avg(`Profit`),2) as profit_rata2
-from spstore_staging
-group by `Region`, `Sub-Category`
+WITH profit_per_region AS (
+    SELECT Region, `Sub-Category`, 
+           ROUND(AVG(`Profit`),2) as profit_rata2
+    FROM spstore_staging
+    GROUP BY `Region`, `Sub-Category`
 )
-select * from profit_per_region 
-order by profit_rata2 desc;
-🎈 Insight :
-> Preferensi pelanggan antar region berbeda. Beberapa region unggul dalam sub-kategori tertentu.
+SELECT * FROM profit_per_region 
+ORDER BY profit_rata2 DESC;
 ```
-## Output : Profit rata-rata per region
-![Profit rata-rata per region] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Profit%20rata-rata%20per%20region)
-## 💹 Rasio Profitability Produk
+**💡 Insight:** Preferensi pelanggan antar region berbeda. Beberapa region unggul dalam sub-kategori tertentu.
+
+### **📈 Tren Bulanan (Quantity & Profit)**
 ```sql
-with profitability as (
-select `Product Name`, sum(`Profit`) as total_profit, sum(`Sales`) as total_sales,
-sum(`Profit`) / nullif(sum(`Sales`),0) as profit_per_sales
-from spstore_staging
-group by `Product Name`
+WITH laporan_bulanan AS (
+    SELECT LEFT(`Order Date`,7) as `Month`,
+           SUM(`Quantity`) as total_qty,
+           SUM(`Profit`) as total_profit
+    FROM spstore_staging
+    GROUP BY `Month`
 )
-select * from profitability
-order by profit_per_sales desc
-limit 5;
-🎈 Insight :
-> Rasio profit terhadap sales memperjelas produk mana yang efisien secara finansial, bukan hanya populer.
+SELECT * FROM laporan_bulanan
+ORDER BY `Month` ASC;
 ```
-## 📈 Tren Bulanan (Quantity & Profit)
-```sql
-with laporan_bulanan as (
-select left(`Order Date`,7) as `Month`,
-sum(`Quantity`) as total_qty,
-sum(`Profit`) as total_profit
-from spstore_staging
-group by  `Month`
-)
-select * from laporan_bulanan
-order by `Month` asc;
-🎈 Insight :
-> Menunjukan tren musiman atau bulanan dalam hal penjualan dan profit
+**💡 Insight:** Menunjukkan tren musiman atau bulanan dalam penjualan dan profit.
+
+---
+
+## 📊 Ringkasan Temuan Utama
+
+### **🎯 Key Performance Indicators:**
+- **Kategori Terlaris:** Office Supplies
+- **Produk Paling Menguntungkan:** `AT&T CL83451 4-Handset Telephone`
+- **Region Terbaik:** `West` -> Total Profit `1337.8457`
+- **Masalah Utama:** Over-discounting pada beberapa produk
+
+### **📈 Rekomendasi Bisnis:**
+1. **Optimasi Diskon:** Review kebijakan diskon untuk produk dengan profit negatif
+2. **Fokus Regional:** Tingkatkan strategi pemasaran di region dengan profit rendah
+3. **Portfolio Produk:** Prioritaskan produk dengan rasio profit/sales tinggi
+4. **Strategi Musiman:** Manfaatkan tren bulanan untuk planning inventory
+
+---
+
+## 🛠️ Stack Teknologi
+
+| **Komponen** | **Teknologi** |
+|--------------|---------------|
+| **Database** | MySQL |
+| **Query Language** | SQL |
+| **Fitur Lanjutan** | Common Table Expressions (CTE) |
+| **Pemrosesan Data** | Table staging (`spstore_staging`) |
+| **Analisis** | Query-based analysis |
+
+---
+
+## 📂 Struktur Repository
+
 ```
-## Output : Tren Bulanan [Month,total_qty,total_profit]
-![Tren Bulanan] (https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis/blob/main/Screenshots/Tren%20Bulanan)
-# 🧰 Tools & Technologies
+├── SQL-Files/
+│   └── [eda_superstore.csv]
+├── Screenshots/
+│   ├── Profit vs Sales ratio.png
+│   ├── top5_product.png
+│   ├── Produk merugi dengan diskon tinggi.png
+│   ├── Profit rata-rata per region.png
+│   └── Tren Bulanan.png
+├── README.md
+└── [Other project files]
 ```
-- SQL Query (Mysql)
-- CTE (Common Table Expression)
-- Analisis berbasis query tanpa visualisasi
-- Data Preprocessing dilakukan pada table `spstore_staging`
-```
-# ✍️ Author
-Faraj Hafidh
-[Github link for-project]
-https://github.com/TachooDa/Retail-Superstore-SQL-EDA-Profitability-Sales-Analysis/edit/main/README.md
+
+---
+
+## 🚀 Cara Menggunakan
+
+1. **Clone repository:**
+   ```bash
+   git clone https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis.git
+   ```
+
+2. **Setup database** dengan tabel `spstore_staging`
+
+3. **Jalankan query SQL** sesuai dengan analisis yang diinginkan
+
+4. **Review hasil** dan visualisasi di folder Screenshots
+
+---
+
+## 🎯 Pengembangan Masa Depan
+
+- [ ] Dashboard interaktif dengan Power BI/Tableau
+- [ ] Predictive analytics untuk forecasting
+- [ ] Customer segmentation analysis
+- [ ] Real-time monitoring dashboard
+- [ ] Machine learning untuk optimasi pricing
+
+---
+
+## 📧 Kontak
+
+**Author:** Faraj Hafidh  
+**GitHub:** [TachooDa](https://github.com/TachooDa)  
+**Project Link:** [Superstore Analysis](https://github.com/TachooDa/Superstore-SQL-EDA-Profitability-Sales-Analysis)
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi sangat diterima! Silakan buka Issue atau kirim Pull Request untuk perbaikan dan pengembangan lebih lanjut.
+
+---
+
+## 📄 Lisensi
+
+Proyek ini bersifat edukatif dan open source untuk pengembangan lebih lanjut.
+
+---
