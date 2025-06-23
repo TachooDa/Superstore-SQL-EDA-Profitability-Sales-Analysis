@@ -4,37 +4,44 @@ select min(`Order Date`), max(`Order Date`)
 from spstore_staging;
 select min(`Ship Date`), max(`Ship Date`)
 from spstore_staging;
+
 -- 1. cek kerugian
 select `Product Name`, `Sales`,`Discount`,`Profit`
 from spstore_staging
 where Profit < 0;
+
 -- 2. cek total profit per region
 select `Region`, sum(`Profit`) as total_profit
 from spstore_staging
 group by `Region`
 order by total_profit desc;
+
 -- 3. total penjualan / kategori
 select `Category`, sum(`Sales`) as total_sales
 from spstore_staging
 group by `Category`
 order by total_sales desc;
+
 -- 4. rata-rata diskon/sub-category
 select `Sub-Category`, round(avg(`Discount`),2) as avg_diskon,
 round(avg(`Profit`),2)as avg_profit
 from spstore_staging
 group by `Sub-Category`
 order by avg_profit;
+
 -- 5. Product paling menguntungkan
 select `Product Name`, `Profit`
 from spstore_staging
 order by `Profit` desc
 limit 5;
+
 -- 6. Product terbanyak terjual
 select `Row ID`,`Product Name`, sum(`Quantity`) as qty_total
 from spstore_staging
 group by `Row ID`,`Product Name`
 order by qty_total desc
 limit 10;
+
 -- 7. Rasio profit ke penjualan
 select `Product Name`,
 sum(Profit) / nullif(sum(Sales),0) as profit_per_sales
@@ -42,23 +49,27 @@ from spstore_staging
 group by `Product Name`
 order by profit_per_sales desc
 limit 5;
+
 -- 8. Cek Ship date
 select `Ship Date`, count(*) as total_ship, 
 round(avg(`Profit`),2) as avg_profit
 from spstore_staging
 group by `Ship Date`
 order by total_ship desc;
+
 -- 9. Cek order date
 select `Order Date`, count(*) as total_order,
 round(avg(`Profit`),2) as avg_profit
 from spstore_staging
 group by `Order Date`
 order by total_order desc;
+
 -- 10. top customer berdasarkan profit
 select `Customer Name`, round(sum(`Profit`),3)as jumlah_profit
 from spstore_staging
 group by `Customer Name`
 order by jumlah_profit desc limit 5;
+
 -- CTE SECTION
 select * from spstore_staging;
 -- 1. 5 Produk tertinggi per category
